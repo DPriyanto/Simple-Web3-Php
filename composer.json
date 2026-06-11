@@ -1,5 +1,5 @@
 {
-    "name": "drlecks/simple-web3-php",
+    "name": "dpriyanto/simple-web3-php",
     "description": "Web3 library in PHP",
     "keywords": ["ethereum", "transaction", "jsonRPC", "eth", "signed transaction", "php", "web3", "contract", "account", "ABIv2"],
     "type": "library",
@@ -7,9 +7,9 @@
 
     "authors": [
         {
-            "name": "drlecks",
-            "email": "contacte@powdercode.com",
-            "homepage": "https://github.com/drlecks/Simple-Web3-Php"
+            "name": "dpriyanto",
+            "email": "github@imtechlab.com",
+            "homepage": "https://github.com/DPriyanto/Simple-Web3-Php"
         }
     ],
 

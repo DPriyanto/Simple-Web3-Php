@@ -1039,8 +1039,15 @@ class ABI
 
 	private static function DecodeInput_BytesFixed($encoded, $start)
     { 
-        $partial = self::RemoveZeros(substr($encoded, $start, 64), false);   
-        return hex2bin($partial);
+        $partial = substr($encoded, $start, 64);
+        // Strip complete zero-byte pairs (00) from the right — ABI right-pads bytesN (N<32) with zero bytes.
+        // Using RemoveZeros() is wrong here because it strips individual hex chars (nibbles),
+        // which corrupts any bytes32 value whose last byte has a low nibble of 0 (e.g. 0xa0),
+        // producing an odd-length string that makes hex2bin() return false.
+        while (strlen($partial) >= 2 && substr($partial, -2) === '00') {
+            $partial = substr($partial, 0, -2);
+        }
+        return strlen($partial) > 0 ? hex2bin($partial) : '';
     }
 
 
