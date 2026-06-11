@@ -19,7 +19,7 @@ include_once("example.config.php");
 use stdClass;
 use SWeb3\SWeb3;
 use SWeb3\SWeb3_Contract;
-use phpseclib3\Math\BigInteger as BigNumber;
+use phpseclib\Math\BigInteger as BigNumber;
 
 //IMPORTANT
 //Remember that this is an example showing how to execute the common features of calling / getting state from the ethereum rpc api
@@ -28,7 +28,7 @@ use phpseclib3\Math\BigInteger as BigNumber;
 
 $extra_curl_params = [];
 //INFURA ONLY: Prepare extra curl params, to add infura private key to the request
-//$extra_curl_params[CURLOPT_USERPWD] = ':'.INFURA_PROJECT_SECRET;
+$extra_curl_params[CURLOPT_USERPWD] = ':'.INFURA_PROJECT_SECRET;
 
 //initialize SWeb3 main object
 $sweb3 = new SWeb3(ETHEREUM_NET_ENDPOINT, $extra_curl_params);
@@ -112,11 +112,12 @@ function PrintCallResult($callName, $result)
     echo "Result -> " . PrintObject($result) . "<br/>"; 
 }
 
-function PrintObject($x, $tabs = 0)
+
+function PrintObject($x)
 { 
 	if ($x instanceof BigNumber)
 	{
-		return $x;
+		return $x . '';
 	}
 	
 	if (is_object($x)) {
@@ -132,10 +133,10 @@ function PrintObject($x, $tabs = 0)
 			if ($first)  	$first = false;
 			else 			$text .= ", ";
 
-			$text .= '<br>' . str_pad("", $tabs * 24, "&nbsp;") . $key . " : " . PrintObject($value, $tabs + 1);
+			$text .= $key . " : " . PrintObject($value);
 		}
 
-		return $text . '<br>' . str_pad("", ($tabs - 1) * 24, "&nbsp;") . "]"; 
+		return $text . "]"; 
 	}
 	 
 	return $x . '';

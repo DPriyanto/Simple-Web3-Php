@@ -15,7 +15,7 @@ use stdClass;
 use Exception;
 use SWeb3\Utils;
 use kornrunner\Ethereum\Transaction;
-use phpseclib3\Math\BigInteger as BigNumber;
+use phpseclib\Math\BigInteger as BigNumber;
 
 class Ethereum_CRPC
 {
@@ -81,24 +81,20 @@ class SWeb3
     }
 
 
-    function call(string $method, ?array $params = null, $blockNumber = '')
+    function call(string $method, $params = null)
     {
         //format api data
         $ethRequest = new Ethereum_CRPC();
-        $ethRequest->id 		= 1;
-        $ethRequest->jsonrpc 	= '2.0';
-        $ethRequest->method 	= $method; 
-
-		$ethRequest->params = [];
-
+        $ethRequest->id = 1;
+        $ethRequest->jsonrpc = '2.0';
+        $ethRequest->method = $method;
+         
 		if ($params != null) {
             $ethRequest->params = $this->utils->forceAllNumbersHex($params);
-        } 
-		 
-		if (!empty($blockNumber)) {
-			$ethRequest->params []= $blockNumber;
-		}
-		 
+        } else {
+            $ethRequest->params = [];
+        }
+ 
         if ($this->do_batch) {
             $this->batched_calls []= $ethRequest;
             return true;
@@ -112,17 +108,17 @@ class SWeb3
 
     function send($params)
     { 
-		if (!isset($params['gasPrice'])) 	$params['gasPrice'] = $this->getGasPrice();
-        if ($params != null) 				$params = $this->utils->forceAllNumbersHex($params); 
+		if (!isset($params['gasPrice'])) $params['gasPrice'] = $this->getGasPrice();
+        if ($params != null) $params = $this->utils->forceAllNumbersHex($params); 
         
         //prepare data
-        $nonce 		= (isset($params['nonce'])) 	? $params['nonce'] : '';
-        $gasPrice 	= (isset($params['gasPrice'])) 	? $params['gasPrice'] : '';
-        $gasLimit 	= (isset($params['gasLimit'])) 	? $params['gasLimit'] : '';
-        $to 		= (isset($params['to'])) 		? $params['to'] : '';
-        $value 		= (isset($params['value'])) 	? $params['value'] : '';
-        $data 		= (isset($params['data'])) 		? $params['data'] : '';
-        $chainId 	= (isset($this->chainId)) 		? $this->chainId : '0x0';
+        $nonce = (isset($params['nonce'])) ? $params['nonce'] : '';
+        $gasPrice = (isset($params['gasPrice'])) ? $params['gasPrice'] : '';
+        $gasLimit = (isset($params['gasLimit'])) ? $params['gasLimit'] : '';
+        $to = (isset($params['to'])) ? $params['to'] : '';
+        $value = (isset($params['value'])) ? $params['value'] : '';
+        $data = (isset($params['data'])) ? $params['data'] : '';
+        $chainId = (isset($this->chainId)) ? $this->chainId : '0x0';
 
 
         //sign transaction 
@@ -191,7 +187,7 @@ class SWeb3
         else 
             throw new Exception('Curl send error: ' . curl_error($tuCurl));   
 
-        curl_close($tuCurl);  
+        curl_close($tuCurl); 
 
         return json_decode($tuData);
     }
@@ -219,9 +215,9 @@ class SWeb3
     }
 
 
-    function getNonce(string $address, $blockNumber = 'pending')
-    { 
-        $transactionCount = $this->call('eth_getTransactionCount', [$address], $blockNumber);   
+    function getNonce(string $address)
+    {
+        $transactionCount = $this->call('eth_getTransactionCount', [$address, 'pending']);   
 
         if(!isset($transactionCount->result)) {
             throw new Exception('getNonce error. from address: ' . $address);   
@@ -238,7 +234,7 @@ class SWeb3
             $gasPriceResult = $this->call('eth_gasPrice'); 
 
             if(!isset($gasPriceResult->result)) {
-				//var_dump($gasPriceResult);
+				var_dump($gasPriceResult);
                 throw new Exception('getGasPrice error. ');   
             }
 

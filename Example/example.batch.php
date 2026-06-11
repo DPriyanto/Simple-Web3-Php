@@ -18,7 +18,7 @@ include_once("example.config.php");
   
 use SWeb3\SWeb3; 
 use SWeb3\SWeb3_Contract;
-use phpseclib3\Math\BigInteger as BigNumber;
+use phpseclib\Math\BigInteger as BigNumber;
 
 
 //IMPORTANT
@@ -30,7 +30,7 @@ use phpseclib3\Math\BigInteger as BigNumber;
 
 $extra_curl_params = [];
 //INFURA ONLY: Prepare extra curl params, to add infura private key to the request
-//$extra_curl_params[CURLOPT_USERPWD] = ':'.INFURA_PROJECT_SECRET;
+$extra_curl_params[CURLOPT_USERPWD] = ':'.INFURA_PROJECT_SECRET;
 
 //initialize SWeb3 main object
 $sweb3 = new SWeb3(ETHEREUM_NET_ENDPOINT, $extra_curl_params);
@@ -41,9 +41,9 @@ $sweb3->setPersonalData(SWP_ADDRESS, SWP_PRIVATE_KEY);
 //enable batching
 $sweb3->batch(true);
 
-//we need the nonce for signing the send eth transaction 
+//we need the nonce for signing the send eth transaction
 $sweb3->call('eth_gasPrice');   
-$sweb3->call('eth_getTransactionCount', [$sweb3->personal->address], 'pending');   
+$sweb3->call('eth_getTransactionCount', [$sweb3->personal->address, 'pending']);   
 $res = $sweb3->executeBatch();
 
 PrintCallResult('Gas price & nonce:', $res);
@@ -77,7 +77,7 @@ $sendParams = [
     'nonce' => $nonce,
     'value' => $sweb3->utils->toWei('0.001', 'ether')
 ];   
-//$sweb3->send($sendParams); 
+$sweb3->send($sendParams); 
 
 
 //EXECUTE 
@@ -117,11 +117,12 @@ function PrintCallResult($callName, $result)
 
 
 
-function PrintObject($x, $tabs = 0)
+
+function PrintObject($x)
 { 
 	if ($x instanceof BigNumber)
 	{
-		return $x;
+		return $x . '';
 	}
 	
 	if (is_object($x)) {
@@ -137,10 +138,10 @@ function PrintObject($x, $tabs = 0)
 			if ($first)  	$first = false;
 			else 			$text .= ", ";
 
-			$text .= '<br>' . str_pad("", $tabs * 24, "&nbsp;") . $key . " : " . PrintObject($value, $tabs + 1);
+			$text .= $key . " : " . PrintObject($value);
 		}
 
-		return $text . '<br>' . str_pad("", ($tabs - 1) * 24, "&nbsp;") . "]"; 
+		return $text . "]"; 
 	}
 	 
 	return $x . '';

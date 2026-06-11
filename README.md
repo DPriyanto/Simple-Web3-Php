@@ -23,20 +23,19 @@ A php interface for interacting with the Ethereum blockchain and ecosystem.
 - Contract Events/logs with filters
 - Support for ERC20 contracts with non-nominative decimal values
 - Examples provided interacting with simple types, strings, tuples, arrays, arrays of tuples with arrays, multi-dimension arrays... 
-- EIP712 Typed structured data hashing
 
 
 # Install
 
 ### Latest stable release
 ```
-composer require drlecks/simple-web3-php "^0.10.0"
+composer require drlecks/simple-web3-php "^0.9.0"
 ```
 
 Or you can add this line in composer.json
 
 ```
-"drlecks/simple-web3-php": "^0.10.0"
+"drlecks/simple-web3-php": "^0.9.0"
 ```
 
 
@@ -67,13 +66,12 @@ $sweb3->setPersonalData($from_address, $from_address_private_key);
 ```
 
 ### Convert values 
-- Most calls return hex or BigNumber to represent numbers. 
-- Most calls expect numeric parameters represented as BigNumbers.
+Most calls return Hex encoded strings to represent numbers. 
 
 Hex to Big Number: 
 ```php 
 use SWeb3\Utils;
- 
+
 $res = $sweb3->call('eth_blockNumber', []);
 $bigNum = Utils::hexToBn($res->result);
 ``` 
@@ -100,17 +98,7 @@ $s_val = Utils::fromWeiToString('1001', 'kwei'); // "1.001"
 $s_val = Utils::toWeiString('1.001', 'kwei'); // "1001"
 ```  
 
-### ABI Encoding  
-Manually encode parameters:
-```php  
-$abiEncoded = ABI::EncodeParameters_External(['address', 'uint256'], [$userAddress, 1]);
-```  
 
-Keccak 256 hash:
-```php  
-$hash = Utils::sha3($abiEncoded);
-```  
-   
 ### General ethereum block information call:
 ```php 
 $res = $sweb3->call('eth_blockNumber', []);
@@ -152,7 +140,7 @@ $result = $sweb3->send($sendParams);
 $sweb3->batch(true);
 
 $sweb3->call('eth_blockNumber', []); 
-$sweb3->call('eth_getBalance', [$sweb3->personal->address], 'latest');
+$sweb3->call('eth_getBalance', [$sweb3->personal->address, 'latest']);
 
 //execute all batched calls in one request
 $res = $sweb3->executeBatch();
@@ -223,13 +211,13 @@ $result = $contract->deployContract( [123123],  $extra_params);
 ### Usual required includes
 
 ```php 
-use SWeb3\SWeb3;                            	//always needed, to create the Web3 object
-use SWeb3\Utils;                            	//sweb3 helper classes (for example, hex conversion operations)
-use SWeb3\SWeb3_Contract;                  	 	//contract creation and interaction
-use SWeb3\Accounts;                   			//account creation
-use SWeb3\Account;                   			//single account management (signing)
-use phpseclib3\Math\BigInteger as BigNumber; 	//BigInt handling
-use stdClass;                               	//for object interaction 
+use SWeb3\SWeb3;                            //always needed, to create the Web3 object
+use SWeb3\Utils;                            //sweb3 helper classes (for example, hex conversion operations)
+use SWeb3\SWeb3_Contract;                   //contract creation and interaction
+use SWeb3\Accounts;                   		//account creation
+use SWeb3\Account;                   		//single account management (signing)
+use phpseclib\Math\BigInteger as BigNumber; //BigInt handling
+use stdClass;                               //for object interaction 
 ```
 
 # Provided Examples
@@ -297,7 +285,7 @@ Don't base your code structure on this example. This example does not represent 
 - Utils library forked & extended from web3p/web3.php
 - Transaction signing: kornrunner/ethereum-offline-raw-tx
 - sha3 encoding: from kornrunner/keccak
-- BigNumber interaction: phpseclib3\Math  
+- BigNumber interaction: phpseclib\Math  
 - Asymetric key handling: simplito/elliptic-php
 
 
